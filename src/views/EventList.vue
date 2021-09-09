@@ -1,6 +1,6 @@
 
 <template>
-  <h1>Events for Good</h1>
+  <h1>Events</h1>
   <div class="events">
     <EventCard v-for="event in events" :key="event.id" :event="event" />
   </div>
@@ -10,7 +10,7 @@
       :to="{ name: 'EventList', query: { page: page - 1 } }"
       rel="prev"
       v-if="page != 1"
-      >Prev Page
+      >&#60; Previous
   </router-link>
 
     <router-link
@@ -18,7 +18,7 @@
       :to="{ name: 'EventList', query: { page: page + 1 } }"
       rel="next"
       v-if="hasNextPage"
-      >Next Page
+      >Next &#62;
     </router-link>
 </div>
 </template>
@@ -37,16 +37,17 @@ export default {
   data() {
     return {
       events: null,
-      totalEvents: 0
+      totalEvents: 0 // Added this to store totalEvents
     }
   },
 	created() {
+		/* We simply allow it to wrap our API call. Now, */
 	    watchEffect(() => {
 	    	this.events = null // This is so when we load another page the current list of events is removed so the user knows that it’s loading. We could also have an animated spinner if we wanted. This will clear out the events on the page, so our user knows the API has been called.
 	      EventService.getEvents(2, this.page)
 	        .then(response => {
 	          this.events = response.data
-	          this.totalEvents = response.headers['x-total-count']
+	          this.totalEvents = response.headers['x-total-count'] // Store totalEvents
 	        })
 	        .catch(error => {
 	          console.log(error)
@@ -73,20 +74,8 @@ export default {
 }
 
 .pagination {
-  display: flex;
-  width: 290px;
-}
-.pagination a {
-  flex: 1;
-  text-decoration: none;
-  color: #2c3e50;
+	display: flex;
+	justify-content: space-around;
 }
 
-#page-prev {
-  text-align: left;
-}
-
-#page-next {
-  text-align: right;
-}
 </style>
