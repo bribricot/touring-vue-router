@@ -45,6 +45,13 @@ const routes = [
       { path: 'edit', redirect: () => ({ name: 'EventEdit' }) }
     ]
   },
+  /* Or with wildcards : 
+  {
+    path: '/event/:afterEvent(.*)',
+    redirect: to => {
+      return { path: '/events/' + to.params.afterEvent }
+    }
+  },*/
         {
     path: '/about',
     name: 'About',
