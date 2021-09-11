@@ -5,6 +5,8 @@ import EventDetails from '../views/event/Details.vue'
 import EventRegister from '../views/event/Register.vue'
 import EventEdit from '../views/event/Edit.vue'
 import About from '../views/About.vue'
+import NotFound from '@/views/event/NotFound.vue'
+import NetworkError from '@/views/event/NetworkError.vue'
 
 const routes = [
   {
@@ -13,15 +15,14 @@ const routes = [
     component: EventList,
     props: route => ({ page: parseInt(route.query.page) || 1 })
   },
-    // http://localhost:8080/?page=2
   {
     path: '/events/:id',
     name: 'EventLayout',
     props: true,
     component: EventLayout,
-    children: [  // <-----   // Nest these child components
+    children: [
       {
-        path: '',// Find them at the root path of the parent
+        path: '',
         name: 'EventDetails',
         component: EventDetails
       },
@@ -34,52 +35,40 @@ const routes = [
         path: 'edit',
         name: 'EventEdit',
         component: EventEdit
-      },
- {
+      }
+    ]
+  },
+      {
     path: '/event/:id',
     redirect: () => {
-			return { name: 'EventDetails' }
-		},
+      return { name: 'EventDetails' }
+    },
     children: [
       { path: 'register', redirect: () => ({ name: 'EventRegister' }) },
       { path: 'edit', redirect: () => ({ name: 'EventEdit' }) }
     ]
   },
-  /* Or with wildcards : 
   {
-    path: '/event/:afterEvent(.*)',
-    redirect: to => {
-      return { path: '/events/' + to.params.afterEvent }
-    }
-  },*/
-        {
     path: '/about',
     name: 'About',
     component: About
+  },
+  {
+    path: '/:catchAll(.*)',
+    name: 'NotFound',
+    component: NotFound
+  },
+  {
+    path: '/404/:resource',
+    name: '404Resource',
+    component: NotFound,
+    props: true
+  },
+  {
+    path: '/network-error',
+    name: 'NetworkError',
+    component: NetworkError
   }
-    ]
-  },
-  /*
-   Before it was complicated and redondant nested routes with the template in each file.
-
-  {
-    path: '/event/:id/register',
-    name: 'EventRegister',
-    props: true,
-    component: EventRegister
-  },
-  {
-    path: '/event/:id/edit',
-    name: 'EventEdit',
-    props: true,
-    component: EventEdit
-  },
-  {
-    path: '/event/:id',
-    name: 'EventDetails',
-    props: true,
-    component: Details
-  }*/
 ]
 
 const router = createRouter({
