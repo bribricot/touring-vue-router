@@ -8,24 +8,19 @@ export default {
   props: ['event'],
   data: function() {
     return {
-      unsavedChanges: true
+      unsavedChanges: true  // <-- Flag gets set to true if anything is changed on the form
     }
   },
-  beforeRouteLeave(routeTo, routeFrom, next) {
+  beforeRouteLeave() {
     if (this.unsavedChanges) {
       const answer = window.confirm(
         'Do you really want to leave? You have unsaved changes!'
       )
-      if (answer) {
-        next() // <-- Confirms the navigation
-      } else {
-        next(false) // <-- Cancels the navigation
+      if (!answer) {
+        return false // <-- Cancels the navigation
       }
-    } else {
-      next() // <-- Confirms the navigation
-    }
+    } 
   }
-
 }
 
 </script>
