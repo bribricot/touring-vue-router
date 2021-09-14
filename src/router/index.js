@@ -8,6 +8,7 @@ import About from '../views/About.vue'
 import NotFound from '@/views/event/NotFound.vue'
 import NetworkError from '@/views/event/NetworkError.vue'
 
+
 const routes = [
   {
     path: '/',

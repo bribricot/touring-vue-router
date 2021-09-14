@@ -17,7 +17,7 @@ export default {
         'Do you really want to leave? You have unsaved changes!'
       )
       if (!answer) {
-        return false // <-- Cancels the navigation
+        return false // <-- Cancels the navigation, or you can return a path, a name path...
       }
     } 
   }

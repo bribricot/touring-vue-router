@@ -31,7 +31,7 @@ export default {
       .then(response => {
         this.event = response.data
       })
-       .catch(error => {
+      .catch(error => {
         if (error.response && error.response.status == 404) {
           this.$router.push({
             name: '404Resource',

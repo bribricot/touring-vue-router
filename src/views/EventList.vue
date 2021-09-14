@@ -26,7 +26,7 @@
 <script>
 import EventCard from '@/components/EventCard.vue'
 import EventService from '@/services/EventService.js'
-import { watchEffect } from 'vue'
+import NProgress from 'nprogress'
 
 export default {
   name: 'EventList',
@@ -37,22 +37,38 @@ export default {
   data() {
     return {
       events: null,
-      totalEvents: 0 // Added this to store totalEvents
+      totalEvents: 0
     }
   },
-	created() {
-		/* We simply allow it to wrap our API call. Now, */
-	    watchEffect(() => {
-	    	this.events = null // This is so when we load another page the current list of events is removed so the user knows that it’s loading. We could also have an animated spinner if we wanted. This will clear out the events on the page, so our user knows the API has been called.
-	      EventService.getEvents(2, this.page)
-	        .then(response => {
-	          this.events = response.data
-	          this.totalEvents = response.headers['x-total-count'] // Store totalEvents
-	        })
-        .catch(() => {
-          this.$router.push({ name: 'NetworkError' })
+	beforeRouteEnter(routeTo, routeFrom, next) {
+	NProgress.start()
+    EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+      .then(response => {
+        next(comp => {
+          comp.events = response.data
+          comp.totalEvents = response.headers['x-total-count']
         })
-	    })
+      })
+      .catch(() => {
+        next({ name: 'NetworkError' })
+      })
+      .finally(() => {
+      NProgress.done()
+      })
+	  },
+	beforeRouteUpdate(routeTo) {
+	NProgress.start()
+    EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+      .then(response => {
+          this.events = response.data
+          this.totalEvents = response.headers['x-total-count']
+        })
+      .catch(() => {
+        return ({ name: 'NetworkError' })
+      })
+      .finally(() => {
+      NProgress.done()
+      })
 	  },
 	  computed: {
     hasNextPage() {

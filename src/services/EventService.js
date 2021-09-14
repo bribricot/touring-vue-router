@@ -14,12 +14,18 @@ const apiClient = axios.create({
 })
 
 export default {
-// First parameter is the events to return per page, and the second is the current page we're on.
   getEvents(perPage, page) {
-  	return apiClient.get('/events?_limit=' + perPage + '&_page=' + page)
- // This string will be added into baseURL
+    return apiClient
+      .get('/events?_limit=' + perPage + '&_page=' + page)
+      .then(sleeper(1000))
   },
   getEvent(id) {
-    return apiClient.get("/events/" + id) //Happend the id we take in parameter 
+    return apiClient.get('/events/' + id)
+  }
+}
+
+function sleeper(ms) {
+  return function(x) {
+    return new Promise(resolve => setTimeout(() => resolve(x), ms))
   }
 }
