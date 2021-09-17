@@ -33,10 +33,10 @@ const routes = [
         if (error.response && error.response.status == 404) {
          //this.$router.push({}) Just return the path we want to redirect to. Same thing for 'else'.
          	return {
-            name: '404Resource',
-            params: { resource: 'event' }
+             name: '404Resource',
+             params: { resource: 'event' }
           }
-        } else {
+          } else {
           return { name: 'NetworkError' }
         }
       })
@@ -55,7 +55,8 @@ const routes = [
       {
         path: 'edit',
         name: 'EventEdit',
-        component: EventEdit
+        component: EventEdit,
+        meta: { requireAuth: true } //The value is just a simple JavaScript object with information about the route. It can be named anything and also have multiple properties. We can access this metafield inside a component but we can also access it inside our router.
       }
     ]
   },
@@ -94,16 +95,38 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 })
+
 
 // For having a global progress bar
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
   NProgress.start()
+  const notAuthorized = true
+  // If the meta for this route has 'requireAuth' and if it does we check to see if 'notAuthorized' is also true. Here we are using a constant for 'notAutorized' but in a fully flesh out application this would be a function that checks if the user is authorized, probably a function inside our authorization library. 
+  if (to.meta.requireAuth && notAuthorized) {
+  	GStore.flashMessage = 'Sorry, you are not authorized to view this page'
+// Resetting the flash message.
+  	setTimeout (() => {
+  		GStore.flashMessage = ''
+  	}, 3000)
+
+  if (from.href) {
+  	return false 
+  } else {
+  	return { path: '/' }
+    }
+  }
 })
+// It's when we access via link to an unauthorized route, we jump back in the events.
 
 router.afterEach(() => {
   NProgress.done()
+  window.scroll({
+  top: 100,
+  left: 100,
+  behavior: 'smooth'
+});
 })
 export default router
